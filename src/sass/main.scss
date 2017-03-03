@@ -1,0 +1,29 @@
+$wi-path: "~weather-icons/font";
+
+@import "~weather-icons/sass/weather-icons.scss";
+@import "~weather-icons/sass/weather-icons-wind.scss";
+@import "mixins";
+@import "weather";
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: 'Oswald', sans-serif;
+}
+
+body {
+  padding-top: 60px;
+}
+
+.blink {
+  animation: blink-animation 2s step-end infinite;
+  -webkit-animation: blink-animation 2s step-end infinite;
+}
+@keyframes blink-animation {
+  from, to {
+    visibility: hidden;
+  }
+  50% {
+    visibility: visible;
+  }
+}
