@@ -1,6 +1,6 @@
 import React from 'react';
 import Clock from 'components/widgets/Clock';
-import Weather from 'components/widgets/Weather';
+import Weather from 'containers/widgets/WeatherContainer';
 
 class Home extends React.Component {
   render() {

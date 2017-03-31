@@ -1,5 +1,4 @@
 import React from 'react';
-import { default as WeatherApi } from 'api/Weather';
 import Moment from 'moment';
 import 'moment-timezone';
 import Clock from 'components/widgets/Clock';
@@ -12,52 +11,6 @@ class Weather extends React.Component {
     this.city = this.props.location.split(',')[0];
     this.backgroundImage = this.getBackgroundImage();
     this.timezone = this.getTimezone();
-
-    this.state = {
-      weather: '',
-      temp : '',
-      humidity: '',
-      wind: '',
-      windDeg: '',
-      pressure: ' ',
-      cloudiness: '',
-      sunrise: '',
-      sunset: '',
-      timestamp: '',
-      date: '',
-      dataLoaded: false,
-    };
-
-    this.fetchData = this.fetchData.bind(this);
-    this.updateFromNow = this.updateFromNow.bind(this);
-  }
-
-  fetchData() {
-    const timestamp = Moment().valueOf();
-
-    this.setState({dataLoaded : false});
-
-    clearInterval(this.fromNowInterval);
-
-    WeatherApi.getCurrentWeather(this.props.location).then((response) => {
-      this.setState({
-        weather: response.weather[0].id,
-        temp: response.main.temp.toFixed(1),
-        humidity: response.main.humidity,
-        description: response.weather[0].description,
-        wind: (response.wind.speed * 3.6).toFixed(1),
-        windDeg: Math.round(response.wind.deg),
-        pressure: response.main.pressure.toFixed(1),
-        cloudiness: response.clouds.all.toFixed(1),
-        sunrise: Moment.tz(response.sys.sunrise*1000, this.getTimezone()).format('HH:mm'),
-        sunset: Moment.tz(response.sys.sunset*1000, this.getTimezone()).format('HH:mm'),
-        timestamp: timestamp,
-        date: Moment(timestamp).fromNow(),
-        dataLoaded: true
-      });
-
-      this.fromNowInterval = setInterval(this.updateFromNow, 1000*60);
-    });
   }
 
   updateFromNow() {
@@ -67,11 +20,12 @@ class Weather extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchData();
+    this.props.fetchData();
   }
 
   componentWillUnmount() {
-    clearInterval(this.fromNowInterval);
+    this.props.unmount();
+    clearInterval(this.props.fromNowInterval);
   }
 
   getBackgroundImage() {
@@ -112,7 +66,7 @@ class Weather extends React.Component {
                 </div>
               </div>
               <div className="last-update">
-                <span className="date">{this.state.dataLoaded ? this.state.date : 'fetching data'}</span>
+                <span className="date">{this.props.loading ? this.state.date : 'fetching data'}</span>
                 <i className="reload wi wi-refresh" onClick={this.fetchData}></i>
               </div>
             </div>

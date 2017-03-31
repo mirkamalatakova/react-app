@@ -16,13 +16,13 @@ class HeaderLinks extends React.Component {
         
         if (RouteMap[route].path === '/') {
           links.push(
-            <IndexLinkContainer to="/">
+            <IndexLinkContainer to="/" key={index}>
               <NavItem eventKey={index}>{RouteMap[route].name}</NavItem>
             </IndexLinkContainer>
           );
         } else {
           links.push(
-            <LinkContainer to={RouteMap[route].path}>
+            <LinkContainer to={RouteMap[route].path} key={index}>
               <NavItem eventKey={index}>{RouteMap[route].name}</NavItem>
             </LinkContainer>
           );
