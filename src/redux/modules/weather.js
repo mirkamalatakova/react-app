@@ -1,48 +1,21 @@
 import WeatherApi from 'api/Weather';
 import Moment from 'moment';
+import { CitiesConfig } from 'config/Cities';
 
 const WEATHER_LOADING_START = 'WEATHER_LOADING_START';
 const WEATHER_LOADING_OK = 'WEATHER_LOADING_OK';
-const WEATHER_UNMOUNT = 'WEATHER_UNMOUNT';
-
-export function unmountWidget(location) {
-  return (dispatch , getState) => {
-    const state = getState();
-    clearInterval(state.weathers[location].fromNowInterval);
-
-    dispatch({
-      type: WEATHER_UNMOUNT,
-      location,
-    }); 
-  }
-}
-
-const updateFromNow = (location)  => {
-  return (dispatch, getState) => {
-    const state = getState();
-
-    dispatch({
-      type: WEATHER_LAST_UPDATE,
-      location,
-      date: Moment(state.weathers[location].timestamp).fromNow(),
-    });    
-  } 
-}
 
 export function getData(location) {
-  return (dispatch, getState) => {
+  return (dispatch/*, getState*/) => {
     dispatch({
       type: WEATHER_LOADING_START,
       location,
     });
-    
-    const state = getState();
-    const timestamp = Moment().valueOf();
 
-    clearInterval(state.weathers[location].fromNowInterval);
+    const weatherLocation = location + ',' + CitiesConfig[location].countryCode;
 
-    WeatherApi.getCurrentWeather(location).then((response) => {
-      const fromNowInterval = setInterval(updateFromNow(location), 1000*60);
+    WeatherApi.getCurrentWeather(weatherLocation).then((response) => {
+      const timezone = CitiesConfig[location].timezone;
 
       dispatch({
         type: WEATHER_LOADING_OK,
@@ -56,12 +29,10 @@ export function getData(location) {
           windDeg: Math.round(response.wind.deg),
           pressure: response.main.pressure.toFixed(1),
           cloudiness: response.clouds.all.toFixed(1),
-          sunrise: Moment.tz(response.sys.sunrise*1000, this.getTimezone()).format('HH:mm'),
-          sunset: Moment.tz(response.sys.sunset*1000, this.getTimezone()).format('HH:mm'),
+          sunrise: Moment.tz(response.sys.sunrise*1000, timezone).format('HH:mm'),
+          sunset: Moment.tz(response.sys.sunset*1000, timezone).format('HH:mm'),
         },
-        fromNowInterval,
-        timestamp,
-        date: Moment(timestamp).fromNow(),
+        timestamp: Moment().valueOf(),
       });
 
     });
@@ -69,63 +40,37 @@ export function getData(location) {
 }
 
 const initialState = {
-  weathers : {
-    'Kosice' : {},
-    'London' : {},
-    'Sydney' : {},
-  }
+  kosice : {},
+  london : {},
+  sydney : {},
 };
 
 /**
- * user reducer
- * @param {Object} state - object holding user state
+ * weather reducer
+ * @param {Object} state - object holding weather state
  * @param {Object} action - action created by action creator
  * @returns {Object} new instance of state
  * @see http://redux.js.org/docs/basics/Reducers.html
  */
-export default function user(state = initialState, action) {
+export default function weather(state = initialState, action) {
+
   switch (action.type) {
     case WEATHER_LOADING_START:
       return {
         ...state,
-        weathers : {
-            ...state.weathers,
-            [action.location] : {
-              ...state.weathers[action.location],
-              loading : true,    
-            },
+        [action.location] : {
+          ...state[action.location],
+          loading : true,   
         },
       };
     case WEATHER_LOADING_OK:
       return {
         ...state,
-        weathers : {
-            ...state.weathers,
-            [action.location] : {
-              ...action.weatherData,
-              loading : false,
-              timestamp : action.timestamp,
-              date : action.date,
-            },
-        },
-      };
-    case WEATHER_LAST_UPDATE:
-      return {
-        ...state,
-        weathers : {
-            ...state.weathers,
-            [action.location] : {
-              ...state.weathers[action.location],
-              date : action.date,
-            },
-        }, 
-      };
-    case WEATHER_UNMOUNT:
-      return {
-        ...state,
-        weathers : {
-            ...state.weathers,
-            [action.location] : {},
+        [action.location] : {
+          ...state[action.location],
+          ...action.weatherData,
+          loading : false,
+          timestamp : action.timestamp,
         },
       };
     default:

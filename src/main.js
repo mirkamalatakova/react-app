@@ -14,10 +14,11 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 
 import clock from 'redux/modules/clock';
+import weather from 'redux/modules/weather';
 
 import 'sass/main.scss';
 
-const reducers = combineReducers({ clock });
+const reducers = combineReducers({ clock, weather });
 
 const store = createStore(reducers, composeWithDevTools(
   applyMiddleware(thunk),

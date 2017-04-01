@@ -8,17 +8,17 @@ class Home extends React.Component {
       <div className="row">
         <div className="col-sm-4">
           <section>
-            <Weather location="Kosice,SK" />
+            <Weather location="kosice" />
           </section>
         </div>
         <div className="col-sm-4">
           <section>
-            <Weather location="London,UK" />
+            <Weather location="london" />
           </section>
         </div>
         <div className="col-sm-4">
           <section>
-            <Weather location="Sydney,AU" />
+            <Weather location="sydney" />
           </section>
         </div>
       </div>
