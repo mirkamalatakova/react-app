@@ -13,12 +13,11 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 
-import clock from 'redux/modules/clock';
 import weather from 'redux/modules/weather';
 
 import 'sass/main.scss';
 
-const reducers = combineReducers({ clock, weather });
+const reducers = combineReducers({ weather });
 
 const store = createStore(reducers, composeWithDevTools(
   applyMiddleware(thunk),

@@ -9,11 +9,32 @@ class Weather extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      timeAgo : '',
+    }
+
     this.backgroundImage = this.getBackgroundImage();
+    this.fromNowInterval = null;
+
+    this.updateFromNow = this.updateFromNow.bind(this);
   }
 
   componentDidMount() {
     this.props.fetchData();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (typeof this.props.timestamp !== 'undefined' && prevProps.timestamp !== this.props.timestamp) {
+      clearInterval(this.fromNowInterval);
+      this.updateFromNow();
+      this.fromNowInterval = setInterval(this.updateFromNow, 1000*5);
+    }
+  }
+
+  updateFromNow() {
+    this.setState({
+      timeAgo: Moment(this.props.timestamp).fromNow()
+    });
   }
 
   getBackgroundImage() {
@@ -28,8 +49,6 @@ class Weather extends React.Component {
     const backgroundStyle = {
       backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(' + this.backgroundImage + ')'
     };
-
-    console.log('rendering');
 
   	return (
       <div>
@@ -47,7 +66,7 @@ class Weather extends React.Component {
                 </div>
               </div>
               <div className="last-update">
-                <span className="date">{this.props.loading ? 'fetching data' : Moment(this.props.timestamp).fromNow()}</span>
+                <span className="date">{this.props.loading ? 'fetching data' : this.state.timeAgo}</span>
                 <i className="reload wi wi-refresh" onClick={this.props.fetchData}></i>
               </div>
             </div>
