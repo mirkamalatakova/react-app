@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
-import Weather from 'components/widgets/Weather';
-import { getData } from 'redux/modules/weather';
+import Info from 'components/widgets/Info';
 
 /**
  * mapStateToProps
@@ -9,9 +8,11 @@ import { getData } from 'redux/modules/weather';
  * @returns {Object} props which will be passed to actual Component
  * @see https://github.com/reactjs/react-redux/blob/master/docs/api.md
  */
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state/*, ownProps*/) => {
   return {
-    ...state.weather[ownProps.location],
+    weatherData : {
+      ...state.weather
+    },
   };
 }
 
@@ -21,16 +22,12 @@ const mapStateToProps = (state, ownProps) => {
  * @see https://github.com/reactjs/react-redux/blob/master/docs/api.md
  */
 const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    fetchData : function() {
-      dispatch(getData(ownProps.location));
-    },
-  };
+  return {};
 }
 
-const WeatherContainer = connect(
+const InfoContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Weather);
+)(Info);
 
-export default WeatherContainer;
+export default InfoContainer;
