@@ -27,8 +27,12 @@ class Weather extends React.Component {
     if (typeof this.props.timestamp !== 'undefined' && prevProps.timestamp !== this.props.timestamp) {
       clearInterval(this.fromNowInterval);
       this.updateFromNow();
-      this.fromNowInterval = setInterval(this.updateFromNow, 1000*5);
+      this.fromNowInterval = setInterval(this.updateFromNow, 1000*60);
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.fromNowInterval);
   }
 
   updateFromNow() {
